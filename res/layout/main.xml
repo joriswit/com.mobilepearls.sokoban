@@ -19,7 +19,7 @@
         android:background="@android:color/black"
         android:gravity="center_vertical"
         android:orientation="horizontal"
-        android:weightSum="2" >
+        android:weightSum="3" >
 
         <Button
             android:id="@+id/game_undobutton"
@@ -35,6 +35,13 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/game_leave" />
+
+        <Button
+            android:id="@+id/game_solverbutton"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/game_solver" />
     </LinearLayout>
 
 </RelativeLayout>

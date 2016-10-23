@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,9 +29,23 @@ public class SokobanGameActivity extends Activity {
 	public static final String IMAGE_SIZE_PREFS_KEY = "image_size";
 	/** If the help should be shown (when max level is one). */
 	public static final String SHOW_HELP_INTENT_EXTRA = "SHOW_HELP";
+	private static final int SOLVER_REQUEST = 1936682102; // "solv"
 	public SokobanGameState gameState;
 
 	SokobanGameView view;
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if (requestCode == SOLVER_REQUEST && resultCode == RESULT_OK) {
+			String solution = data.getStringExtra("SOLUTION");
+			if (solution != null) {
+				gameState.tryLurdMoves(solution);
+				if (gameState.isDone()) {
+					view.gameOver();
+				}
+			}
+		}
+	}
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -89,6 +104,16 @@ public class SokobanGameActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				finish();
+			}
+		});
+		final Intent solveIntent = new Intent("nl.joriswit.sokosolver.SOLVE");
+		boolean canStartSolver = getPackageManager().queryIntentActivities(solveIntent, PackageManager.MATCH_DEFAULT_ONLY).size() > 0;
+		findViewById(R.id.game_solverbutton).setVisibility(canStartSolver ? View.VISIBLE : View.INVISIBLE);
+		findViewById(R.id.game_solverbutton).setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				solveIntent.putExtra("LEVEL", gameState.getXsb());
+				startActivityForResult(solveIntent, SOLVER_REQUEST);
 			}
 		});
 	}

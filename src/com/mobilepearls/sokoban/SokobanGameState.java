@@ -100,6 +100,21 @@ public class SokobanGameState implements Serializable {
 		return map.length;
 	}
 
+	public String getXsb() {
+		StringBuilder builder = new StringBuilder();
+		for (int y = 0; y < map[0].length; y++) {
+			for (int x = 0; x < map.length; x++) {
+				if (map[x][y] == '\'') {
+					builder.append(' ');
+				} else {
+					builder.append(map[x][y]);
+				}
+			}
+			builder.append('\n');
+		}
+		return builder.toString();
+	}
+
 	public boolean isDone() {
 		for (int x = 0; x < map.length; x++)
 			for (int y = 0; y < map[0].length; y++)
@@ -127,6 +142,23 @@ public class SokobanGameState implements Serializable {
 	public void restart() {
 		loadLevel(currentLevel, currentLevelSet);
 		undos.clear();
+	}
+
+	public void tryLurdMoves(String lurd) {
+		for (char c: lurd.toCharArray()) {
+			if (Character.toLowerCase(c) == 'l') {
+				tryMove(-1, 0);
+			}
+			if (Character.toLowerCase(c) == 'u') {
+				tryMove(0, -1);
+			}
+			if (Character.toLowerCase(c) == 'r') {
+				tryMove(1, 0);
+			}
+			if (Character.toLowerCase(c) == 'd') {
+				tryMove(0, 1);
+			}
+		}
 	}
 
 	/** Return whether something was changed. */
